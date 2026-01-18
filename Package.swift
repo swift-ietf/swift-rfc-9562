@@ -9,7 +9,7 @@ let package = Package(
         .iOS(.v26),
         .tvOS(.v26),
         .watchOS(.v26),
-        .visionOS(.v26),
+        .visionOS(.v26)
     ],
     products: [
         .library(
@@ -18,21 +18,13 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(path: "../swift-rfc-4122"),
-        .package(path: "../../swift-foundations/swift-testing-extras"),
+        .package(path: "../swift-rfc-4122")
     ],
     targets: [
         .target(
             name: "RFC 9562",
             dependencies: [
-                .product(name: "RFC 4122", package: "swift-rfc-4122"),
-            ]
-        ),
-        .testTarget(
-            name: "RFC 9562".tests,
-            dependencies: [
-                "RFC 9562",
-                .product(name: "Testing Extras", package: "swift-testing-extras"),
+                .product(name: "RFC 4122", package: "swift-rfc-4122")
             ]
         )
     ],
