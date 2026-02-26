@@ -26,7 +26,13 @@ let package = Package(
             dependencies: [
                 .product(name: "RFC 4122", package: "swift-rfc-4122")
             ]
-        )
+        ),
+        .testTarget(
+            name: "RFC 9562 Tests",
+            dependencies: [
+                "RFC 9562",
+            ]
+        ),
     ],
     swiftLanguageModes: [.v6]
 )
@@ -41,6 +47,7 @@ for target in package.targets where ![.system, .binary, .plugin, .macro].contain
         .enableUpcomingFeature("ExistentialAny"),
         .enableUpcomingFeature("InternalImportsByDefault"),
         .enableUpcomingFeature("MemberImportVisibility"),
+        .enableUpcomingFeature("NonisolatedNonsendingByDefault"),
         .enableExperimentalFeature("Lifetimes"),
         .enableExperimentalFeature("SuppressedAssociatedTypes"),
         .enableExperimentalFeature("SuppressedAssociatedTypesWithDefaults"),

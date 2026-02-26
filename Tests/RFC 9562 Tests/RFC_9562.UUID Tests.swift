@@ -1,12 +1,17 @@
 // RFC_9562.UUID Tests.swift
 
 import Testing
-import Testing
 import RFC_4122
 @testable import RFC_9562
 
 extension RFC_9562.UUID {
-    #Tests
+    @Suite
+    struct Test {
+        @Suite struct Unit {}
+        @Suite struct EdgeCase {}
+        @Suite struct Integration {}
+        @Suite(.serialized) struct Performance {}
+    }
 }
 
 // MARK: - Unit Tests
