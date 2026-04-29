@@ -1,0 +1,10 @@
+# .github/metadata.yaml
+# Triaged by AI-assisted bulk pass (2026-04-29).
+description: "Swift implementation of RFC 9562: Universally Unique IDentifiers (UUIDs)."
+topics:
+  - standards
+  - rfc
+  - rfc-9562
+  - uuid
+  - identifiers
+homepage: "https://swift-institute.org"
