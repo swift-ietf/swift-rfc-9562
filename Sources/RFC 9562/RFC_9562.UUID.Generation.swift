@@ -79,12 +79,13 @@ extension RFC_9562.UUID {
         precondition(unixMilliseconds >= 0, "Unix timestamp must be non-negative")
         precondition(unixMilliseconds <= 0xFFFF_FFFF_FFFF, "Unix timestamp must fit in 48 bits")
 
-        var bytes: (
-            UInt8, UInt8, UInt8, UInt8,
-            UInt8, UInt8, UInt8, UInt8,
-            UInt8, UInt8, UInt8, UInt8,
-            UInt8, UInt8, UInt8, UInt8
-        ) = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+        var bytes:
+            (
+                UInt8, UInt8, UInt8, UInt8,
+                UInt8, UInt8, UInt8, UInt8,
+                UInt8, UInt8, UInt8, UInt8,
+                UInt8, UInt8, UInt8, UInt8
+            ) = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
         // Fill bytes 6-15 with random data (bytes 0-5 will be overwritten with timestamp)
         let outcome: Result<Void, R.RandomError> = Swift.withUnsafeMutableBytes(of: &bytes) { buffer in
@@ -144,12 +145,13 @@ extension RFC_9562.UUID {
         precondition(unixMilliseconds >= 0, "Unix timestamp must be non-negative")
         precondition(unixMilliseconds <= 0xFFFF_FFFF_FFFF, "Unix timestamp must fit in 48 bits")
 
-        var bytes: (
-            UInt8, UInt8, UInt8, UInt8,
-            UInt8, UInt8, UInt8, UInt8,
-            UInt8, UInt8, UInt8, UInt8,
-            UInt8, UInt8, UInt8, UInt8
-        ) = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+        var bytes:
+            (
+                UInt8, UInt8, UInt8, UInt8,
+                UInt8, UInt8, UInt8, UInt8,
+                UInt8, UInt8, UInt8, UInt8,
+                UInt8, UInt8, UInt8, UInt8
+            ) = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
         // Fill bytes 6-15 with random data
         let outcome: Result<Void, E> = Swift.withUnsafeMutableBytes(of: &bytes) { buffer in
@@ -227,12 +229,14 @@ extension RFC_9562.UUID {
     ///
     /// - Parameter customBytes: 16 bytes as a tuple.
     /// - Returns: A version 8 UUID.
-    public static func v8(customBytes: (
-        UInt8, UInt8, UInt8, UInt8,
-        UInt8, UInt8, UInt8, UInt8,
-        UInt8, UInt8, UInt8, UInt8,
-        UInt8, UInt8, UInt8, UInt8
-    )) -> Self {
+    public static func v8(
+        customBytes: (
+            UInt8, UInt8, UInt8, UInt8,
+            UInt8, UInt8, UInt8, UInt8,
+            UInt8, UInt8, UInt8, UInt8,
+            UInt8, UInt8, UInt8, UInt8
+        )
+    ) -> Self {
         var bytes = customBytes
 
         // Set version 8

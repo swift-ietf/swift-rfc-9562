@@ -1,8 +1,8 @@
 // RFC_9562.UUID+Dependency.swift
 // Convenience UUID v7 generation using dependency-resolved random provider
 
-public import RFC_4122
 import Dependency_Primitives
+public import RFC_4122
 
 // MARK: - Version 7 (Time-ordered, resolved from context)
 

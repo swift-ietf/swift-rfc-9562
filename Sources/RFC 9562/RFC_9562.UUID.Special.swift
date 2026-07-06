@@ -12,12 +12,14 @@ extension RFC_9562.UUID {
     /// It has no inherent meaning and can be used as a placeholder or sentinel value.
     ///
     /// - Note: The nil UUID does not have a valid version or variant field.
-    public static let `nil` = Self(bytes: (
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00
-    ))
+    public static let `nil` = Self(
+        bytes: (
+            0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00
+        )
+    )
 
     /// The max UUID: all ones.
     ///
@@ -25,12 +27,14 @@ extension RFC_9562.UUID {
     /// It can be used for sorting or as a sentinel representing the maximum possible value.
     ///
     /// - Note: The max UUID does not have a valid version or variant field.
-    public static let max = Self(bytes: (
-        0xFF, 0xFF, 0xFF, 0xFF,
-        0xFF, 0xFF, 0xFF, 0xFF,
-        0xFF, 0xFF, 0xFF, 0xFF,
-        0xFF, 0xFF, 0xFF, 0xFF
-    ))
+    public static let max = Self(
+        bytes: (
+            0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF
+        )
+    )
 
     /// Whether this UUID is the nil UUID (all zeros).
     public var isNil: Bool {

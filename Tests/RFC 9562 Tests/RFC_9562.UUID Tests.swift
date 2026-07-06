@@ -1,7 +1,8 @@
 // RFC_9562.UUID Tests.swift
 
-import Testing
 import RFC_4122
+import Testing
+
 @testable import RFC_9562
 
 extension RFC_9562.UUID {
@@ -79,7 +80,7 @@ extension RFC_9562.UUID.Test.Unit {
     @Test
     func `Extracts milliseconds from v7 UUID`() throws {
         let uuid = try RFC_9562.UUID("018e0b69-7c00-7000-8000-000000000000")
-        #expect(uuid.unixMilliseconds == 0x018E0B697C00)
+        #expect(uuid.unixMilliseconds == 0x018E_0B69_7C00)
     }
 
     @Test
@@ -89,7 +90,7 @@ extension RFC_9562.UUID.Test.Unit {
             Issue.record("Expected seconds to be non-nil")
             return
         }
-        #expect(seconds == 0x018E0B697C00 / 1000)
+        #expect(seconds == 0x018E_0B69_7C00 / 1000)
     }
 
     // MARK: Type Alias
@@ -115,9 +116,9 @@ extension RFC_9562.UUID.Test.Unit {
         let uuid = try RFC_9562.UUID("017f22e2-79b0-7cc3-98c4-dc0c0c07398f")
         #expect(uuid.version9562 == .v7)
         #expect(uuid.variant == .rfc4122)
-        #expect(uuid.unixMilliseconds == 0x017F22E279B0)
+        #expect(uuid.unixMilliseconds == 0x017F_22E2_79B0)
         // Verify: 2022-02-22T19:22:22.000Z
-        #expect(uuid.unixMilliseconds == 1645557742000)
+        #expect(uuid.unixMilliseconds == 1_645_557_742_000)
     }
 
     @Test
@@ -209,7 +210,7 @@ extension RFC_9562.UUID.Test.Unit {
         // Timestamp = 0xFFFFFFFFFFFF (max 48-bit)
         let uuid = try RFC_9562.UUID("ffffffff-ffff-7000-8000-000000000000")
         #expect(uuid.version9562 == .v7)
-        #expect(uuid.unixMilliseconds == 0xFFFFFFFFFFFF)
+        #expect(uuid.unixMilliseconds == 0xFFFF_FFFF_FFFF)
         // This is year 10889 AD
     }
 }
@@ -272,7 +273,7 @@ extension RFC_9562.UUID.Test.Unit {
     @Test
     func `v7 generates correct version and variant`() throws {
         let uuid = try RFC_9562.UUID.v7(
-            unixMilliseconds: 1645557742000,
+            unixMilliseconds: 1_645_557_742_000,
             using: MockRandom(pattern: 0xAA)
         )
 
@@ -283,7 +284,7 @@ extension RFC_9562.UUID.Test.Unit {
 
     @Test
     func `v7 encodes timestamp correctly`() throws {
-        let timestamp: Int64 = 0x017F22E279B0  // 1645557742000
+        let timestamp: Int64 = 0x017F_22E2_79B0  // 1645557742000
 
         let uuid = try RFC_9562.UUID.v7(
             unixMilliseconds: timestamp,
@@ -385,7 +386,7 @@ extension RFC_9562.UUID.Test.Unit {
             0x01, 0x02, 0x03, 0x04,
             0x05, 0x06, 0x07, 0x08,
             0x09, 0x0A, 0x0B, 0x0C,
-            0x0D, 0x0E, 0x0F, 0x10
+            0x0D, 0x0E, 0x0F, 0x10,
         ]
 
         let uuid = RFC_9562.UUID.v8(customBytes: customBytes)
@@ -401,7 +402,7 @@ extension RFC_9562.UUID.Test.Unit {
             0xFF, 0xFF, 0xFF, 0xFF,
             0xFF, 0xFF, 0xFF, 0xFF,
             0xFF, 0xFF, 0xFF, 0xFF,
-            0xFF, 0xFF, 0xFF, 0xFF
+            0xFF, 0xFF, 0xFF, 0xFF,
         ]
 
         let uuid = RFC_9562.UUID.v8(customBytes: customBytes)
@@ -428,12 +429,14 @@ extension RFC_9562.UUID.Test.Unit {
 
     @Test
     func `v8 tuple-based generation`() throws {
-        let uuid = RFC_9562.UUID.v8(customBytes: (
-            0x01, 0x02, 0x03, 0x04,
-            0x05, 0x06, 0x07, 0x08,
-            0x09, 0x0A, 0x0B, 0x0C,
-            0x0D, 0x0E, 0x0F, 0x10
-        ))
+        let uuid = RFC_9562.UUID.v8(
+            customBytes: (
+                0x01, 0x02, 0x03, 0x04,
+                0x05, 0x06, 0x07, 0x08,
+                0x09, 0x0A, 0x0B, 0x0C,
+                0x0D, 0x0E, 0x0F, 0x10
+            )
+        )
 
         #expect(uuid.version9562 == .v8)
         #expect(uuid[0] == 0x01)
