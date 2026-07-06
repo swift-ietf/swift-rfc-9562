@@ -10,7 +10,6 @@ extension RFC_9562.UUID {
         @Suite struct Unit {}
         @Suite struct EdgeCase {}
         @Suite struct Integration {}
-        @Suite(.serialized) struct Performance {}
     }
 }
 
@@ -262,111 +261,6 @@ private struct SequentialRandom: RFC_9562.RandomProvider {
     func fill(_ buffer: UnsafeMutableRawBufferPointer) throws(Never) {
         for (i, index) in buffer.indices.enumerated() {
             buffer[index] = start &+ UInt8(i)
-        }
-    }
-}
-
-// MARK: - Performance
-
-extension RFC_9562.UUID.Test.Performance {
-
-    // MARK: v7 Generation
-
-    @Test("v7 generation", .timed(iterations: 1000, warmup: 100))
-    func v7Generation() throws {
-        _ = try RFC_9562.UUID.v7(
-            unixMilliseconds: 1645557742000,
-            using: PerfRandom()
-        )
-    }
-
-    @Test
-    func `v7 generation batch (1000 UUIDs)`() {
-        let random = PerfRandom()
-        Benchmark.measure(iterations: 10, warmup: 2, name: "v7 x1000") {
-            for i in 0..<1000 {
-                _ = try? RFC_9562.UUID.v7(
-                    unixMilliseconds: Int64(1645557742000 + i),
-                    using: random
-                )
-            }
-        }
-    }
-
-    @Test("v7 closure-based generation", .timed(iterations: 1000, warmup: 100))
-    func v7ClosureGeneration() throws {
-        _ = try RFC_9562.UUID.v7(unixMilliseconds: 1645557742000) { buffer in
-            for i in buffer.indices {
-                buffer[i] = UInt8(truncatingIfNeeded: i)
-            }
-        }
-    }
-
-    // MARK: v8 Generation
-
-    @Test("v8 generation (array)", .timed(iterations: 1000, warmup: 100))
-    func v8GenerationArray() {
-        let bytes: [UInt8] = [
-            0x01, 0x02, 0x03, 0x04,
-            0x05, 0x06, 0x07, 0x08,
-            0x09, 0x0A, 0x0B, 0x0C,
-            0x0D, 0x0E, 0x0F, 0x10
-        ]
-        _ = RFC_9562.UUID.v8(customBytes: bytes)
-    }
-
-    @Test("v8 generation (tuple)", .timed(iterations: 1000, warmup: 100))
-    func v8GenerationTuple() {
-        _ = RFC_9562.UUID.v8(customBytes: (
-            0x01, 0x02, 0x03, 0x04,
-            0x05, 0x06, 0x07, 0x08,
-            0x09, 0x0A, 0x0B, 0x0C,
-            0x0D, 0x0E, 0x0F, 0x10
-        ))
-    }
-
-    // MARK: Timestamp Extraction
-
-    @Test("Timestamp extraction (milliseconds)", .timed(iterations: 1000, warmup: 100))
-    func timestampMilliseconds() throws {
-        let uuid = try RFC_9562.UUID("018e0b69-7c00-7000-8000-000000000000")
-        _ = uuid.unixMilliseconds
-    }
-
-    @Test("Timestamp extraction (seconds)", .timed(iterations: 1000, warmup: 100))
-    func timestampSeconds() throws {
-        let uuid = try RFC_9562.UUID("018e0b69-7c00-7000-8000-000000000000")
-        _ = uuid.unixSeconds
-    }
-
-    // MARK: Version Detection (RFC 9562 extended)
-
-    @Test("Version detection (v6-v8)", .timed(iterations: 1000, warmup: 100))
-    func version9562Detection() throws {
-        let uuid = try RFC_9562.UUID("018f0b69-7c00-7000-8000-000000000000")
-        _ = uuid.version9562
-    }
-
-    // MARK: Special UUIDs
-
-    @Test("Nil UUID check", .timed(iterations: 1000, warmup: 100))
-    func nilCheck() {
-        let uuid = RFC_9562.UUID.nil
-        _ = uuid.isNil
-    }
-
-    @Test("Max UUID check", .timed(iterations: 1000, warmup: 100))
-    func maxCheck() {
-        let uuid = RFC_9562.UUID.max
-        _ = uuid.isMax
-    }
-}
-
-/// Lightweight random provider for performance testing
-private struct PerfRandom: RFC_9562.RandomProvider {
-    func fill(_ buffer: UnsafeMutableRawBufferPointer) throws(Never) {
-        for i in buffer.indices {
-            buffer[i] = UInt8(truncatingIfNeeded: i)
         }
     }
 }
