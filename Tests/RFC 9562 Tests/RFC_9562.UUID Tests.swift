@@ -9,7 +9,7 @@ extension RFC_9562.UUID {
     @Suite
     struct Test {
         @Suite struct Unit {}
-        @Suite struct EdgeCase {}
+        @Suite struct `Edge Case` {}
         @Suite struct Integration {}
     }
 }
@@ -217,7 +217,7 @@ extension RFC_9562.UUID.Test.Unit {
 
 // MARK: - Edge Cases
 
-extension RFC_9562.UUID.Test.EdgeCase {
+extension RFC_9562.UUID.Test.`Edge Case` {
     @Test
     func `Returns nil timestamp for non-v7 UUID`() throws {
         let v4uuid = try RFC_9562.UUID("550e8400-e29b-41d4-a716-446655440000")
