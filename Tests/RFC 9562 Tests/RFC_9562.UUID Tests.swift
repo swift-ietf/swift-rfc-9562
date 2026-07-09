@@ -247,7 +247,9 @@ extension RFC_9562.UUID.Test.EdgeCase {
 /// Mock random provider for deterministic testing
 private struct MockRandom: RFC_9562.RandomProvider {
     let pattern: UInt8
+}
 
+extension MockRandom {
     func fill(_ buffer: UnsafeMutableRawBufferPointer) throws(Never) {
         for i in buffer.indices {
             buffer[i] = pattern
@@ -258,7 +260,9 @@ private struct MockRandom: RFC_9562.RandomProvider {
 /// Mock random provider that fills with sequential bytes
 private struct SequentialRandom: RFC_9562.RandomProvider {
     let start: UInt8
+}
 
+extension SequentialRandom {
     func fill(_ buffer: UnsafeMutableRawBufferPointer) throws(Never) {
         for (i, index) in buffer.indices.enumerated() {
             buffer[index] = start &+ UInt8(i)
