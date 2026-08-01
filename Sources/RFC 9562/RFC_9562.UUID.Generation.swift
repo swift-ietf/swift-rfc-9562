@@ -22,7 +22,7 @@ extension RFC_9562 {
     /// ```
     public protocol RandomProvider: Sendable {
         /// Error type thrown by the random provider.
-        associatedtype RandomError: Error
+        associatedtype RandomError: Swift.Error
 
         /// Fills the buffer with cryptographically secure random bytes.
         ///

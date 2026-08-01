@@ -178,7 +178,7 @@ extension RFC_9562.UUID.Test.Unit {
     @Test
     func `RFC 9562: Nil UUID byte verification`() {
         let uuid = RFC_9562.UUID.nil
-        for i in 0..<16 {
+        (0..<16).forEach { i in
             #expect(uuid[i] == 0x00)
         }
         // Nil UUID has no valid version (all zeros)
@@ -188,7 +188,7 @@ extension RFC_9562.UUID.Test.Unit {
     @Test
     func `RFC 9562: Max UUID byte verification`() {
         let uuid = RFC_9562.UUID.max
-        for i in 0..<16 {
+        (0..<16).forEach { i in
             #expect(uuid[i] == 0xFF)
         }
         // Max UUID has no valid version (0xF = 15, not defined)
@@ -331,7 +331,7 @@ extension RFC_9562.UUID.Test.Unit {
         #expect(uuid[8] == 0xBF)  // 10111111
 
         // Bytes 9-15 should be fully random
-        for i in 9..<16 {
+        (9..<16).forEach { i in
             #expect(uuid[i] == 0xFF)
         }
     }
@@ -347,7 +347,7 @@ extension RFC_9562.UUID.Test.Unit {
         #expect(uuid.unixMilliseconds == 0)
 
         // Bytes 0-5 should all be zero
-        for i in 0..<6 {
+        (0..<6).forEach { i in
             #expect(uuid[i] == 0x00)
         }
     }
@@ -365,7 +365,7 @@ extension RFC_9562.UUID.Test.Unit {
         #expect(uuid.unixMilliseconds == maxTimestamp)
 
         // Bytes 0-5 should all be 0xFF
-        for i in 0..<6 {
+        (0..<6).forEach { i in
             #expect(uuid[i] == 0xFF)
         }
     }
@@ -412,7 +412,7 @@ extension RFC_9562.UUID.Test.Unit {
         let uuid = RFC_9562.UUID.v8(customBytes: customBytes)
 
         // Bytes 0-5 preserved
-        for i in 0..<6 {
+        (0..<6).forEach { i in
             #expect(uuid[i] == 0xFF)
         }
 
@@ -426,7 +426,7 @@ extension RFC_9562.UUID.Test.Unit {
         #expect(uuid[8] == 0xBF)  // Variant (0x80) | low 6 bits (0x3F)
 
         // Bytes 9-15 preserved
-        for i in 9..<16 {
+        (9..<16).forEach { i in
             #expect(uuid[i] == 0xFF)
         }
     }
