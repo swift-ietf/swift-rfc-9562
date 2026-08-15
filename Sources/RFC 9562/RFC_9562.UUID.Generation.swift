@@ -88,7 +88,8 @@ extension RFC_9562.UUID {
             ) = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
         // Fill bytes 6-15 with random data (bytes 0-5 will be overwritten with timestamp)
-        let outcome: Result<Void, R.RandomError> = Swift.withUnsafeMutableBytes(of: &bytes) { buffer in
+        let outcome: Result<Void, R.RandomError> = Swift.withUnsafeMutableBytes(of: &bytes) {
+            buffer in
             // Fill only bytes 6-15 with random data
             let randomBuffer = UnsafeMutableRawBufferPointer(
                 rebasing: buffer[6...]
