@@ -1,5 +1,3 @@
-// RFC_9562.UUID Tests.swift
-
 import RFC_4122
 import Testing
 
@@ -14,11 +12,7 @@ extension RFC_9562.UUID {
     }
 }
 
-// MARK: - Unit Tests
-
 extension RFC_9562.UUID.Test.Unit {
-
-    // MARK: Special UUIDs
 
     @Test
     func `Nil UUID is all zeros`() {
@@ -42,8 +36,6 @@ extension RFC_9562.UUID.Test.Unit {
         #expect(!uuid.isNil)
         #expect(!uuid.isMax)
     }
-
-    // MARK: Version Detection (RFC 9562 extended versions)
 
     @Test
     func `Detects v1`() throws {
@@ -75,8 +67,6 @@ extension RFC_9562.UUID.Test.Unit {
         #expect(uuid.version9562 == .v8)
     }
 
-    // MARK: Timestamp Extraction
-
     @Test
     func `Extracts milliseconds from v7 UUID`() throws {
         let uuid = try RFC_9562.UUID("018e0b69-7c00-7000-8000-000000000000")
@@ -93,8 +83,6 @@ extension RFC_9562.UUID.Test.Unit {
         #expect(seconds == 0x018E_0B69_7C00 / 1000)
     }
 
-    // MARK: Type Alias
-
     @Test
     func `RFC_9562.UUID is RFC_4122.UUID`() throws {
         let rfc9562uuid: RFC_9562.UUID = try RFC_9562.UUID("550e8400-e29b-41d4-a716-446655440000")
@@ -103,34 +91,27 @@ extension RFC_9562.UUID.Test.Unit {
     }
 }
 
-// MARK: - RFC 9562 Test Vectors
-
 extension RFC_9562.UUID.Test.Unit {
-
-    // MARK: RFC 9562 Section 5.7 - UUIDv7 Test Vectors
 
     @Test
     func `RFC 9562: v7 timestamp extraction (known vector)`() throws {
-        // Example from RFC 9562 - timestamp 0x017F22E279B0 = 1645557742000 ms
-        // UUID: 017f22e2-79b0-7cc3-98c4-dc0c0c07398f
+
         let uuid = try RFC_9562.UUID("017f22e2-79b0-7cc3-98c4-dc0c0c07398f")
         #expect(uuid.version9562 == .v7)
         #expect(uuid.variant == .rfc4122)
         #expect(uuid.unixMilliseconds == 0x017F_22E2_79B0)
-        // Verify: 2022-02-22T19:22:22.000Z
+
         #expect(uuid.unixMilliseconds == 1_645_557_742_000)
     }
 
     @Test
     func `RFC 9562: v7 bit layout verification`() throws {
-        // Construct a v7 UUID and verify the bit layout
-        // Timestamp: 0x018EC3C5D400 (known value)
+
         let uuid = try RFC_9562.UUID("018ec3c5-d400-7000-8000-000000000000")
         #expect(uuid.version9562 == .v7)
         #expect(uuid.versionNumber == 7)
         #expect(uuid.variant == .rfc4122)
 
-        // Verify timestamp bytes (0-5)
         #expect(uuid[0] == 0x01)
         #expect(uuid[1] == 0x8e)
         #expect(uuid[2] == 0xc3)
@@ -138,42 +119,32 @@ extension RFC_9562.UUID.Test.Unit {
         #expect(uuid[4] == 0xd4)
         #expect(uuid[5] == 0x00)
 
-        // Verify version nibble in byte 6
-        #expect((uuid[6] & 0xF0) == 0x70)  // Version 7
+        #expect((uuid[6] & 0xF0) == 0x70)
 
-        // Verify variant bits in byte 8
-        #expect((uuid[8] & 0xC0) == 0x80)  // RFC 4122 variant
+        #expect((uuid[8] & 0xC0) == 0x80)
     }
-
-    // MARK: RFC 9562 Section 5.6 - UUIDv6 Test Vectors
 
     @Test
     func `RFC 9562: v6 structure verification`() throws {
-        // UUIDv6 is a reordered v1 for better sortability
+
         let uuid = try RFC_9562.UUID("1ec9414c-232a-6b00-b3c8-9f6bdeced846")
         #expect(uuid.version9562 == .v6)
         #expect(uuid.versionNumber == 6)
         #expect(uuid.variant == .rfc4122)
 
-        // Version nibble should be 6
         #expect((uuid[6] & 0xF0) == 0x60)
     }
 
-    // MARK: RFC 9562 Section 5.8 - UUIDv8 Test Vectors
-
     @Test
     func `RFC 9562: v8 custom UUID`() throws {
-        // v8 allows custom data in all bits except version and variant
+
         let uuid = try RFC_9562.UUID("320c3d4d-cc00-875b-8ec9-32d5f69181c0")
         #expect(uuid.version9562 == .v8)
         #expect(uuid.versionNumber == 8)
         #expect(uuid.variant == .rfc4122)
 
-        // Version nibble should be 8
         #expect((uuid[6] & 0xF0) == 0x80)
     }
-
-    // MARK: RFC 9562 Section 5.9/5.10 - Special UUIDs
 
     @Test
     func `RFC 9562: Nil UUID byte verification`() {
@@ -181,7 +152,7 @@ extension RFC_9562.UUID.Test.Unit {
         (0..<16).forEach { i in
             #expect(uuid[i] == 0x00)
         }
-        // Nil UUID has no valid version (all zeros)
+
         #expect(uuid.version9562 == nil)
     }
 
@@ -191,15 +162,13 @@ extension RFC_9562.UUID.Test.Unit {
         (0..<16).forEach { i in
             #expect(uuid[i] == 0xFF)
         }
-        // Max UUID has no valid version (0xF = 15, not defined)
+
         #expect(uuid.version9562 == nil)
     }
 
-    // MARK: Timestamp Edge Cases
-
     @Test
     func `v7 timestamp: Unix epoch (zero)`() throws {
-        // Timestamp = 0 (1970-01-01T00:00:00.000Z)
+
         let uuid = try RFC_9562.UUID("00000000-0000-7000-8000-000000000000")
         #expect(uuid.version9562 == .v7)
         #expect(uuid.unixMilliseconds == 0)
@@ -207,15 +176,13 @@ extension RFC_9562.UUID.Test.Unit {
 
     @Test
     func `v7 timestamp: Maximum 48-bit value`() throws {
-        // Timestamp = 0xFFFFFFFFFFFF (max 48-bit)
+
         let uuid = try RFC_9562.UUID("ffffffff-ffff-7000-8000-000000000000")
         #expect(uuid.version9562 == .v7)
         #expect(uuid.unixMilliseconds == 0xFFFF_FFFF_FFFF)
-        // This is year 10889 AD
+
     }
 }
-
-// MARK: - Edge Cases
 
 extension RFC_9562.UUID.Test.`Edge Case` {
     @Test
@@ -227,7 +194,7 @@ extension RFC_9562.UUID.Test.`Edge Case` {
 
     @Test
     func `Returns nil version for invalid version number`() throws {
-        // Version 0 is not valid
+
         let uuid = try RFC_9562.UUID("00000000-0000-0000-8000-000000000000")
         #expect(uuid.version9562 == nil)
         #expect(uuid.versionNumber == 0)
@@ -235,16 +202,13 @@ extension RFC_9562.UUID.Test.`Edge Case` {
 
     @Test
     func `Returns nil version for version 9+`() throws {
-        // Version 9 is not defined
+
         let uuid = try RFC_9562.UUID("00000000-0000-9000-8000-000000000000")
         #expect(uuid.version9562 == nil)
         #expect(uuid.versionNumber == 9)
     }
 }
 
-// MARK: - Generation Tests
-
-/// Mock random provider for deterministic testing
 private struct MockRandom: RFC_9562.RandomProvider {
     let pattern: UInt8
 }
@@ -257,7 +221,6 @@ extension MockRandom {
     }
 }
 
-/// Mock random provider that fills with sequential bytes
 private struct SequentialRandom: RFC_9562.RandomProvider {
     let start: UInt8
 }
@@ -271,8 +234,6 @@ extension SequentialRandom {
 }
 
 extension RFC_9562.UUID.Test.Unit {
-
-    // MARK: v7 Generation
 
     @Test
     func `v7 generates correct version and variant`() throws {
@@ -288,17 +249,15 @@ extension RFC_9562.UUID.Test.Unit {
 
     @Test
     func `v7 encodes timestamp correctly`() throws {
-        let timestamp: Int64 = 0x017F_22E2_79B0  // 1645557742000
+        let timestamp: Int64 = 0x017F_22E2_79B0
 
         let uuid = try RFC_9562.UUID.v7(
             unixMilliseconds: timestamp,
             using: MockRandom(pattern: 0x00)
         )
 
-        // Verify timestamp is encoded in bytes 0-5
         #expect(uuid.unixMilliseconds == timestamp)
 
-        // Verify individual bytes
         #expect(uuid[0] == 0x01)
         #expect(uuid[1] == 0x7F)
         #expect(uuid[2] == 0x22)
@@ -314,8 +273,6 @@ extension RFC_9562.UUID.Test.Unit {
             using: MockRandom(pattern: 0xFF)
         )
 
-        // Byte 6 low nibble should be preserved (0xF from random)
-        // High nibble is version (0x7)
         #expect(uuid[6] == 0x7F)
     }
 
@@ -326,11 +283,8 @@ extension RFC_9562.UUID.Test.Unit {
             using: MockRandom(pattern: 0xFF)
         )
 
-        // Byte 8 low 6 bits should be preserved (0x3F from random)
-        // High 2 bits are variant (0x80)
-        #expect(uuid[8] == 0xBF)  // 10111111
+        #expect(uuid[8] == 0xBF)
 
-        // Bytes 9-15 should be fully random
         (9..<16).forEach { i in
             #expect(uuid[i] == 0xFF)
         }
@@ -346,7 +300,6 @@ extension RFC_9562.UUID.Test.Unit {
         #expect(uuid.version9562 == .v7)
         #expect(uuid.unixMilliseconds == 0)
 
-        // Bytes 0-5 should all be zero
         (0..<6).forEach { i in
             #expect(uuid[i] == 0x00)
         }
@@ -364,7 +317,6 @@ extension RFC_9562.UUID.Test.Unit {
         #expect(uuid.version9562 == .v7)
         #expect(uuid.unixMilliseconds == maxTimestamp)
 
-        // Bytes 0-5 should all be 0xFF
         (0..<6).forEach { i in
             #expect(uuid[i] == 0xFF)
         }
@@ -381,8 +333,6 @@ extension RFC_9562.UUID.Test.Unit {
         #expect(uuid.version9562 == .v7)
         #expect(uuid.unixMilliseconds == 1000)
     }
-
-    // MARK: v8 Generation
 
     @Test
     func `v8 generates correct version and variant`() throws {
@@ -411,21 +361,16 @@ extension RFC_9562.UUID.Test.Unit {
 
         let uuid = RFC_9562.UUID.v8(customBytes: customBytes)
 
-        // Bytes 0-5 preserved
         (0..<6).forEach { i in
             #expect(uuid[i] == 0xFF)
         }
 
-        // Byte 6: version bits set, low nibble preserved
-        #expect(uuid[6] == 0x8F)  // Version 8 (0x80) | low nibble (0x0F)
+        #expect(uuid[6] == 0x8F)
 
-        // Byte 7 preserved
         #expect(uuid[7] == 0xFF)
 
-        // Byte 8: variant bits set, low 6 bits preserved
-        #expect(uuid[8] == 0xBF)  // Variant (0x80) | low 6 bits (0x3F)
+        #expect(uuid[8] == 0xBF)
 
-        // Bytes 9-15 preserved
         (9..<16).forEach { i in
             #expect(uuid[i] == 0xFF)
         }
