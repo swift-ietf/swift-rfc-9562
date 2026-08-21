@@ -91,11 +91,11 @@ extension RFC_9562.UUID {
         let outcome: Result<Void, R.RandomError> = Swift.withUnsafeMutableBytes(of: &bytes) {
             buffer in
             // Fill only bytes 6-15 with random data
-            let randomBuffer = UnsafeMutableRawBufferPointer(
+            let randomBuffer = unsafe UnsafeMutableRawBufferPointer(
                 rebasing: buffer[6...]
             )
             do throws(R.RandomError) {
-                try random.fill(randomBuffer)
+                try unsafe random.fill(randomBuffer)
                 return .success(())
             } catch {
                 return .failure(error)
@@ -156,9 +156,9 @@ extension RFC_9562.UUID {
 
         // Fill bytes 6-15 with random data
         let outcome: Result<Void, E> = Swift.withUnsafeMutableBytes(of: &bytes) { buffer in
-            let randomBuffer = UnsafeMutableRawBufferPointer(rebasing: buffer[6...])
+            let randomBuffer = unsafe UnsafeMutableRawBufferPointer(rebasing: buffer[6...])
             do throws(E) {
-                try fillRandom(randomBuffer)
+                try unsafe fillRandom(randomBuffer)
                 return .success(())
             } catch {
                 return .failure(error)
