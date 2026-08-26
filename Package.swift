@@ -18,13 +18,15 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/swift-ietf/swift-rfc-4122.git", branch: "main")
+        .package(url: "https://github.com/swift-ietf/swift-rfc-4122.git", branch: "main"),
+        .package(url: "https://github.com/swift-molecules/swift-dependency.git", branch: "main"),
     ],
     targets: [
         .target(
             name: "RFC 9562",
             dependencies: [
-                .product(name: "RFC 4122", package: "swift-rfc-4122")
+                .product(name: "RFC 4122", package: "swift-rfc-4122"),
+                .product(name: "Dependency", package: "swift-dependency"),
             ]
         ),
         .testTarget(

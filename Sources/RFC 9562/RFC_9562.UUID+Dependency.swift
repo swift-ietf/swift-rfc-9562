@@ -1,4 +1,4 @@
-import Dependency_Primitives
+import Dependency
 public import RFC_4122
 
 extension RFC_9562.UUID {
