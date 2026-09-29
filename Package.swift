@@ -19,7 +19,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/swift-ietf/swift-rfc-4122.git", branch: "main"),
-        .package(url: "https://github.com/swift-molecules/swift-dependency.git", branch: "main"),
+        .package(url: "https://github.com/swift-atoms/swift-dependency.git", branch: "main"),
     ],
     targets: [
         .target(
