@@ -4,7 +4,7 @@ extension RFC_9562 {
 
     public protocol RandomProvider: Sendable {
 
-        associatedtype RandomError: Swift.Error
+        associatedtype RandomError: Swift::Error
 
         func fill(_ buffer: UnsafeMutableRawBufferPointer) throws(RandomError)
     }
@@ -28,7 +28,7 @@ extension RFC_9562.UUID {
                 UInt8, UInt8, UInt8, UInt8
             ) = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
-        let outcome: Result<Void, R.RandomError> = Swift.withUnsafeMutableBytes(of: &bytes) {
+        let outcome: Result<Void, R.RandomError> = Swift::withUnsafeMutableBytes(of: &bytes) {
             buffer in
 
             let randomBuffer = unsafe UnsafeMutableRawBufferPointer(
@@ -57,7 +57,7 @@ extension RFC_9562.UUID {
         return Self(bytes: bytes)
     }
 
-    public static func v7<E: Swift.Error>(
+    public static func v7<E: Swift::Error>(
         unixMilliseconds: Int64,
         fillRandom: (UnsafeMutableRawBufferPointer) throws(E) -> Void
     ) throws(E) -> Self {
@@ -72,7 +72,7 @@ extension RFC_9562.UUID {
                 UInt8, UInt8, UInt8, UInt8
             ) = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
-        let outcome: Result<Void, E> = Swift.withUnsafeMutableBytes(of: &bytes) { buffer in
+        let outcome: Result<Void, E> = Swift::withUnsafeMutableBytes(of: &bytes) { buffer in
             let randomBuffer = unsafe UnsafeMutableRawBufferPointer(rebasing: buffer[6...])
             do throws(E) {
                 try unsafe fillRandom(randomBuffer)

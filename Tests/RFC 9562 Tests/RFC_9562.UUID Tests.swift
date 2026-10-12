@@ -216,7 +216,7 @@ private struct MockRandom: RFC_9562.RandomProvider {
 extension MockRandom {
     func fill(_ buffer: UnsafeMutableRawBufferPointer) throws(Never) {
         for i in buffer.indices {
-            buffer[i] = pattern
+            unsafe buffer[i] = pattern
         }
     }
 }
@@ -228,7 +228,7 @@ private struct SequentialRandom: RFC_9562.RandomProvider {
 extension SequentialRandom {
     func fill(_ buffer: UnsafeMutableRawBufferPointer) throws(Never) {
         for (i, index) in buffer.indices.enumerated() {
-            buffer[index] = start &+ UInt8(i)
+            unsafe buffer[index] = start &+ UInt8(i)
         }
     }
 }
@@ -237,7 +237,7 @@ extension RFC_9562.UUID.Test.Unit {
 
     @Test
     func `v7 generates correct version and variant`() throws {
-        let uuid = try RFC_9562.UUID.v7(
+        let uuid = RFC_9562.UUID.v7(
             unixMilliseconds: 1_645_557_742_000,
             using: MockRandom(pattern: 0xAA)
         )
@@ -251,7 +251,7 @@ extension RFC_9562.UUID.Test.Unit {
     func `v7 encodes timestamp correctly`() throws {
         let timestamp: Int64 = 0x017F_22E2_79B0
 
-        let uuid = try RFC_9562.UUID.v7(
+        let uuid = RFC_9562.UUID.v7(
             unixMilliseconds: timestamp,
             using: MockRandom(pattern: 0x00)
         )
@@ -268,7 +268,7 @@ extension RFC_9562.UUID.Test.Unit {
 
     @Test
     func `v7 preserves random bits in rand_a`() throws {
-        let uuid = try RFC_9562.UUID.v7(
+        let uuid = RFC_9562.UUID.v7(
             unixMilliseconds: 0,
             using: MockRandom(pattern: 0xFF)
         )
@@ -278,7 +278,7 @@ extension RFC_9562.UUID.Test.Unit {
 
     @Test
     func `v7 preserves random bits in rand_b`() throws {
-        let uuid = try RFC_9562.UUID.v7(
+        let uuid = RFC_9562.UUID.v7(
             unixMilliseconds: 0,
             using: MockRandom(pattern: 0xFF)
         )
@@ -292,7 +292,7 @@ extension RFC_9562.UUID.Test.Unit {
 
     @Test
     func `v7 with zero timestamp`() throws {
-        let uuid = try RFC_9562.UUID.v7(
+        let uuid = RFC_9562.UUID.v7(
             unixMilliseconds: 0,
             using: MockRandom(pattern: 0x00)
         )
@@ -309,7 +309,7 @@ extension RFC_9562.UUID.Test.Unit {
     func `v7 with maximum 48-bit timestamp`() throws {
         let maxTimestamp: Int64 = 0xFFFF_FFFF_FFFF
 
-        let uuid = try RFC_9562.UUID.v7(
+        let uuid = RFC_9562.UUID.v7(
             unixMilliseconds: maxTimestamp,
             using: MockRandom(pattern: 0x00)
         )
@@ -324,9 +324,9 @@ extension RFC_9562.UUID.Test.Unit {
 
     @Test
     func `v7 closure-based generation`() throws {
-        let uuid = try RFC_9562.UUID.v7(unixMilliseconds: 1000) { buffer in
+        let uuid = unsafe RFC_9562.UUID.v7(unixMilliseconds: 1000) { buffer in
             for i in buffer.indices {
-                buffer[i] = 0x55
+                unsafe buffer[i] = 0x55
             }
         }
 
