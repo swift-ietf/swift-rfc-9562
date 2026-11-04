@@ -1,35 +1,11 @@
 # swift-rfc-9562
 
-![Development Status](https://img.shields.io/badge/status-active--development-blue.svg)
+Use this package when you need the parts of RFC 9562 that RFC 4122 lacks: making time-ordered version 7 UUIDs, making custom version 8 UUIDs, reading the timestamp out of a version 7 UUID, recognising versions 6 to 8, and the nil and max UUIDs. Start from `RFC_9562.UUID`, which is the same type as `RFC_4122.UUID`, so parsing and formatting come from swift-rfc-4122. If you want UUID generation already bound to the platform's random number generator, use swift-uuids.
 
-Generation and parsing of UUIDs per RFC 9562, including versions 1 through 8.
+## Laws
 
-## Standard Reference
-
-- **RFC**: 9562
-- **Title**: Universally Unique IDentifiers (UUIDs)
-
-## Installation
-
-Add the package to your `Package.swift` dependencies:
-
-```swift
-dependencies: [
-    .package(url: "https://github.com/swift-ietf/swift-rfc-9562.git", branch: "main")
-]
-```
-
-Add the product to a target that needs it:
-
-```swift
-.target(
-    name: "YourTarget",
-    dependencies: [
-        .product(name: "RFC 9562", package: "swift-rfc-9562")
-    ]
-)
-```
-
-## License
-
-Apache 2.0. See [LICENSE.md](LICENSE.md).
+- `RFC_9562.UUID.v7(unixMilliseconds:using:)` puts the timestamp in the first 48 bits, big-endian, and fills the other 80 bits from the random source. It then overwrites the version and variant bits, which leaves 74 random bits.
+- `RFC_9562.UUID.v7(unixMilliseconds:)` without a random source draws from the `RFC_4122.Random` in the current dependency scope.
+- `RFC_9562.UUID.v8(customBytes:)` keeps every byte you pass except the version and variant bits, which it sets to version 8 and the RFC 4122 variant.
+- `RFC_9562.UUID.unixMilliseconds` and `RFC_9562.UUID.unixSeconds` are nil for any UUID that is not version 7. `RFC_9562.UUID.unixSeconds` rounds down to whole seconds.
+- `RFC_9562.UUID.version9562` is nil when the version field is 0 or above 8. That includes `RFC_9562.UUID.nil` and `RFC_9562.UUID.max`.
