@@ -3,7 +3,9 @@ import Testing
 
 @testable import RFC_9562
 
-extension RFC_9562.UUID {
+enum `RFC_9562.UUID Tests` {}
+
+extension `RFC_9562.UUID Tests` {
     @Suite
     struct Test {
         @Suite struct Unit {}
@@ -12,7 +14,7 @@ extension RFC_9562.UUID {
     }
 }
 
-extension RFC_9562.UUID.Test.Unit {
+extension `RFC_9562.UUID Tests`.Test.Unit {
 
     @Test
     func `Nil UUID is all zeros`() {
@@ -91,7 +93,7 @@ extension RFC_9562.UUID.Test.Unit {
     }
 }
 
-extension RFC_9562.UUID.Test.Unit {
+extension `RFC_9562.UUID Tests`.Test.Unit {
 
     @Test
     func `RFC 9562: v7 timestamp extraction (known vector)`() throws {
@@ -184,7 +186,7 @@ extension RFC_9562.UUID.Test.Unit {
     }
 }
 
-extension RFC_9562.UUID.Test.`Edge Case` {
+extension `RFC_9562.UUID Tests`.Test.`Edge Case` {
     @Test
     func `Returns nil timestamp for non-v7 UUID`() throws {
         let v4uuid = try RFC_9562.UUID("550e8400-e29b-41d4-a716-446655440000")
@@ -233,7 +235,7 @@ extension SequentialRandom {
     }
 }
 
-extension RFC_9562.UUID.Test.Unit {
+extension `RFC_9562.UUID Tests`.Test.Unit {
 
     @Test
     func `v7 generates correct version and variant`() throws {
