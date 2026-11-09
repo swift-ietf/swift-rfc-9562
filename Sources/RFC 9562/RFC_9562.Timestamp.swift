@@ -1,6 +1,6 @@
 extension RFC_9562 {
 
-    public struct Timestamp: Sendable, Hashable, Comparable {
+    public struct Timestamp: Sendable, Hashable {
 
         public let unixMilliseconds: Int64
 
@@ -10,9 +10,11 @@ extension RFC_9562 {
             }
             self.unixMilliseconds = unixMilliseconds
         }
+    }
+}
 
-        public static func < (lhs: Self, rhs: Self) -> Bool {
-            lhs.unixMilliseconds < rhs.unixMilliseconds
-        }
+extension RFC_9562.Timestamp: Comparable {
+    public static func < (lhs: Self, rhs: Self) -> Bool {
+        lhs.unixMilliseconds < rhs.unixMilliseconds
     }
 }
