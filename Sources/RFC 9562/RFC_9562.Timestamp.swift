@@ -1,22 +1,18 @@
-public import RFC_4122
+extension RFC_9562 {
 
-extension RFC_9562.UUID {
+    public struct Timestamp: Sendable, Hashable, Comparable {
 
-    public var unixMilliseconds: Int64? {
-        guard versionNumber == 7 else { return nil }
+        public let unixMilliseconds: Int64
 
-        let b0 = Int64(bytes.0)
-        let b1 = Int64(bytes.1)
-        let b2 = Int64(bytes.2)
-        let b3 = Int64(bytes.3)
-        let b4 = Int64(bytes.4)
-        let b5 = Int64(bytes.5)
+        public init(unixMilliseconds: Int64) throws(Error) {
+            guard (0...0xFFFF_FFFF_FFFF).contains(unixMilliseconds) else {
+                throw .outOfRange
+            }
+            self.unixMilliseconds = unixMilliseconds
+        }
 
-        return (b0 << 40) | (b1 << 32) | (b2 << 24) | (b3 << 16) | (b4 << 8) | b5
-    }
-
-    public var unixSeconds: Int64? {
-        guard let millis = unixMilliseconds else { return nil }
-        return millis / 1000
+        public static func < (lhs: Self, rhs: Self) -> Bool {
+            lhs.unixMilliseconds < rhs.unixMilliseconds
+        }
     }
 }

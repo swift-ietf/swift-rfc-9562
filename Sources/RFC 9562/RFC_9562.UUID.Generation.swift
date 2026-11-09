@@ -13,12 +13,11 @@ extension RFC_9562 {
 extension RFC_9562.UUID {
 
     public static func v7<R: RFC_9562.RandomProvider>(
-        unixMilliseconds: Int64,
+        timestamp: RFC_9562.Timestamp,
         using random: R
     ) throws(R.RandomError) -> Self {
 
-        precondition(unixMilliseconds >= 0, "Unix timestamp must be non-negative")
-        precondition(unixMilliseconds <= 0xFFFF_FFFF_FFFF, "Unix timestamp must fit in 48 bits")
+        let unixMilliseconds = timestamp.unixMilliseconds
 
         var bytes:
             (
@@ -58,11 +57,10 @@ extension RFC_9562.UUID {
     }
 
     public static func v7<E: Swift::Error>(
-        unixMilliseconds: Int64,
+        timestamp: RFC_9562.Timestamp,
         fillRandom: (UnsafeMutableRawBufferPointer) throws(E) -> Void
     ) throws(E) -> Self {
-        precondition(unixMilliseconds >= 0, "Unix timestamp must be non-negative")
-        precondition(unixMilliseconds <= 0xFFFF_FFFF_FFFF, "Unix timestamp must fit in 48 bits")
+        let unixMilliseconds = timestamp.unixMilliseconds
 
         var bytes:
             (
@@ -99,23 +97,6 @@ extension RFC_9562.UUID {
 }
 
 extension RFC_9562.UUID {
-
-    public static func v8(customBytes: [UInt8]) -> Self {
-        precondition(customBytes.count == 16, "Custom bytes must be exactly 16 bytes")
-
-        var bytes = (
-            customBytes[0], customBytes[1], customBytes[2], customBytes[3],
-            customBytes[4], customBytes[5], customBytes[6], customBytes[7],
-            customBytes[8], customBytes[9], customBytes[10], customBytes[11],
-            customBytes[12], customBytes[13], customBytes[14], customBytes[15]
-        )
-
-        bytes.6 = (bytes.6 & 0x0F) | 0x80
-
-        bytes.8 = (bytes.8 & 0x3F) | 0x80
-
-        return Self(bytes: bytes)
-    }
 
     public static func v8(
         customBytes: (

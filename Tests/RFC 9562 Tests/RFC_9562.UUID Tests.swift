@@ -239,8 +239,8 @@ extension `RFC_9562.UUID Tests`.Test.Unit {
 
     @Test
     func `v7 generates correct version and variant`() throws {
-        let uuid = RFC_9562.UUID.v7(
-            unixMilliseconds: 1_645_557_742_000,
+        let uuid = try RFC_9562.UUID.v7(
+            timestamp: RFC_9562.Timestamp(unixMilliseconds: 1_645_557_742_000),
             using: MockRandom(pattern: 0xAA)
         )
 
@@ -253,8 +253,8 @@ extension `RFC_9562.UUID Tests`.Test.Unit {
     func `v7 encodes timestamp correctly`() throws {
         let timestamp: Int64 = 0x017F_22E2_79B0
 
-        let uuid = RFC_9562.UUID.v7(
-            unixMilliseconds: timestamp,
+        let uuid = try RFC_9562.UUID.v7(
+            timestamp: RFC_9562.Timestamp(unixMilliseconds: timestamp),
             using: MockRandom(pattern: 0x00)
         )
 
@@ -270,8 +270,8 @@ extension `RFC_9562.UUID Tests`.Test.Unit {
 
     @Test
     func `v7 preserves random bits in rand_a`() throws {
-        let uuid = RFC_9562.UUID.v7(
-            unixMilliseconds: 0,
+        let uuid = try RFC_9562.UUID.v7(
+            timestamp: RFC_9562.Timestamp(unixMilliseconds: 0),
             using: MockRandom(pattern: 0xFF)
         )
 
@@ -280,8 +280,8 @@ extension `RFC_9562.UUID Tests`.Test.Unit {
 
     @Test
     func `v7 preserves random bits in rand_b`() throws {
-        let uuid = RFC_9562.UUID.v7(
-            unixMilliseconds: 0,
+        let uuid = try RFC_9562.UUID.v7(
+            timestamp: RFC_9562.Timestamp(unixMilliseconds: 0),
             using: MockRandom(pattern: 0xFF)
         )
 
@@ -294,8 +294,8 @@ extension `RFC_9562.UUID Tests`.Test.Unit {
 
     @Test
     func `v7 with zero timestamp`() throws {
-        let uuid = RFC_9562.UUID.v7(
-            unixMilliseconds: 0,
+        let uuid = try RFC_9562.UUID.v7(
+            timestamp: RFC_9562.Timestamp(unixMilliseconds: 0),
             using: MockRandom(pattern: 0x00)
         )
 
@@ -311,8 +311,8 @@ extension `RFC_9562.UUID Tests`.Test.Unit {
     func `v7 with maximum 48-bit timestamp`() throws {
         let maxTimestamp: Int64 = 0xFFFF_FFFF_FFFF
 
-        let uuid = RFC_9562.UUID.v7(
-            unixMilliseconds: maxTimestamp,
+        let uuid = try RFC_9562.UUID.v7(
+            timestamp: RFC_9562.Timestamp(unixMilliseconds: maxTimestamp),
             using: MockRandom(pattern: 0x00)
         )
 
@@ -326,7 +326,8 @@ extension `RFC_9562.UUID Tests`.Test.Unit {
 
     @Test
     func `v7 closure-based generation`() throws {
-        let uuid = unsafe RFC_9562.UUID.v7(unixMilliseconds: 1000) { buffer in
+        let timestamp = try RFC_9562.Timestamp(unixMilliseconds: 1000)
+        let uuid = unsafe RFC_9562.UUID.v7(timestamp: timestamp) { buffer in
             for i in buffer.indices {
                 unsafe buffer[i] = 0x55
             }
@@ -338,14 +339,14 @@ extension `RFC_9562.UUID Tests`.Test.Unit {
 
     @Test
     func `v8 generates correct version and variant`() throws {
-        let customBytes: [UInt8] = [
-            0x01, 0x02, 0x03, 0x04,
-            0x05, 0x06, 0x07, 0x08,
-            0x09, 0x0A, 0x0B, 0x0C,
-            0x0D, 0x0E, 0x0F, 0x10,
-        ]
-
-        let uuid = RFC_9562.UUID.v8(customBytes: customBytes)
+        let uuid = RFC_9562.UUID.v8(
+            customBytes: (
+                0x01, 0x02, 0x03, 0x04,
+                0x05, 0x06, 0x07, 0x08,
+                0x09, 0x0A, 0x0B, 0x0C,
+                0x0D, 0x0E, 0x0F, 0x10
+            )
+        )
 
         #expect(uuid.version9562 == .v8)
         #expect(uuid.versionNumber == 8)
@@ -354,14 +355,14 @@ extension `RFC_9562.UUID Tests`.Test.Unit {
 
     @Test
     func `v8 preserves custom data except version/variant bits`() throws {
-        let customBytes: [UInt8] = [
-            0xFF, 0xFF, 0xFF, 0xFF,
-            0xFF, 0xFF, 0xFF, 0xFF,
-            0xFF, 0xFF, 0xFF, 0xFF,
-            0xFF, 0xFF, 0xFF, 0xFF,
-        ]
-
-        let uuid = RFC_9562.UUID.v8(customBytes: customBytes)
+        let uuid = RFC_9562.UUID.v8(
+            customBytes: (
+                0xFF, 0xFF, 0xFF, 0xFF,
+                0xFF, 0xFF, 0xFF, 0xFF,
+                0xFF, 0xFF, 0xFF, 0xFF,
+                0xFF, 0xFF, 0xFF, 0xFF
+            )
+        )
 
         (0..<6).forEach { i in
             #expect(uuid[i] == 0xFF)
@@ -392,5 +393,31 @@ extension `RFC_9562.UUID Tests`.Test.Unit {
         #expect(uuid.version9562 == .v8)
         #expect(uuid[0] == 0x01)
         #expect(uuid[15] == 0x10)
+    }
+}
+
+extension `RFC_9562.UUID Tests`.Test.`Edge Case` {
+
+    @Test
+    func `Timestamp rejects negative milliseconds`() {
+        #expect(throws: RFC_9562.Timestamp.Error.outOfRange) {
+            try RFC_9562.Timestamp(unixMilliseconds: -1)
+        }
+    }
+
+    @Test
+    func `Timestamp rejects milliseconds beyond 48 bits`() {
+        #expect(throws: RFC_9562.Timestamp.Error.outOfRange) {
+            try RFC_9562.Timestamp(unixMilliseconds: 0x1_0000_0000_0000)
+        }
+    }
+
+    @Test
+    func `Timestamp accepts the 48-bit bounds`() throws {
+        #expect(try RFC_9562.Timestamp(unixMilliseconds: 0).unixMilliseconds == 0)
+        #expect(
+            try RFC_9562.Timestamp(unixMilliseconds: 0xFFFF_FFFF_FFFF).unixMilliseconds
+                == 0xFFFF_FFFF_FFFF
+        )
     }
 }
